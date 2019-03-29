@@ -1,0 +1,44 @@
+<?php
+/*
+  Template Name: Twilio 
+ */
+get_header();
+require( get_stylesheet_directory()  . '/twilio/vendor/autoload.php');
+use Twilio\Rest\Client;
+
+if(isset($_POST['twi_mob_num']) && isset($_POST['twil_msg'])){
+
+$account_sid = 'AC1ba3213ac607918585c835afadfaf0ed';
+$auth_token = 'ee07d921dae262d274d77ed5110f864b';
+// In production, these should be environment variables. E.g.:
+// $auth_token = $_ENV["TWILIO_ACCOUNT_SID"]
+
+// A Twilio number you own with SMS capabilities
+    $twilio_number = "+12027936803";
+
+    $client = new Client($account_sid, $auth_token);
+    $message = $client->messages->create(
+    // Where to send a text message (your cell phone?)
+    $_POST['twi_mob_num'],
+    array(
+        'from' => $twilio_number,
+        'body' => $_POST['twil_msg']
+    )
+);
+
+    if($message->sid){echo "Sent successfully.";}
+
+} ?>
+<h2>Sending SMS using Twilio API</h2>
+
+<form action="" method="post">
+Enter Mobile:<br>
+<input type="text" placeholder="Mobile Number" name="twi_mob_num"><br>
+
+Message<br>
+<textarea cols="5" placeholder="Message" name="twil_msg"></textarea><br>
+
+<input type="Submit" value="Send">
+
+</form> 
+<?php get_footer(); ?>

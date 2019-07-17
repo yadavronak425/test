@@ -1,0 +1,9 @@
+$ques_option_content .= '<select name="multiple_choice' . $i . '" ' . $multiple_choice_required . ' multiple>';
+                $ques_option_content .= '<option value="">Select</option>';
+
+                while (have_rows('multiple_choice_type', $first_ques)) : the_row(); 
+                    $ques_option_content .= '<option data-warn-check="' . get_sub_field("mcq_check_warn", $first_ques) . '" data-warn-msg="' . get_sub_field("mcq_check_warn_msg", $first_ques) . '" value="' . get_sub_field("new_choice", $first_ques) . '">';
+                    $ques_option_content .= get_sub_field('new_choice', $first_ques);
+                    $ques_option_content .= '</option>';
+                endwhile;
+                $ques_option_content .= '</select>';

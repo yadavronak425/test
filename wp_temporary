@@ -1,9 +1,52 @@
-$ques_option_content .= '<select name="multiple_choice' . $i . '" ' . $multiple_choice_required . ' multiple>';
-                $ques_option_content .= '<option value="">Select</option>';
-
-                while (have_rows('multiple_choice_type', $first_ques)) : the_row(); 
-                    $ques_option_content .= '<option data-warn-check="' . get_sub_field("mcq_check_warn", $first_ques) . '" data-warn-msg="' . get_sub_field("mcq_check_warn_msg", $first_ques) . '" value="' . get_sub_field("new_choice", $first_ques) . '">';
-                    $ques_option_content .= get_sub_field('new_choice', $first_ques);
-                    $ques_option_content .= '</option>';
-                endwhile;
-                $ques_option_content .= '</select>';
+/*--Start of Dropdown MCQ type warning --*/
+                $( ".allquestion select" )
+                    .change(function() {
+                        let img_attr = 'multiple_choice';
+                        $('select option').not(':selected').each(function() { 
+                            let wrng_crnt_ques_id = $('#result_crnt_ques_id').val();
+                            let wrng_opt_val = $(this).val();
+                            let warn_check = $(this).attr("data-warn-check");
+                        
+                        if (warn_check != "") {
+                            if ($(this).parentsUntil(".mcq_type").next().is('p')) {
+                                $(this).parentsUntil(".mcq_type").next().remove("p");
+                            }
+                            /*start of remove value in hidden for Warning */
+                            $("#warning_div .warn_input").each(function () {
+                                let warn_dat_id = $(this).attr("data-id");
+                                let warn_dat_opt = $(this).attr("data-option");
+                                if (wrng_crnt_ques_id === warn_dat_id && wrng_opt_val === warn_dat_opt) {
+                                    $(this).remove();
+                                }
+                            });
+                            /*End of remove value in hidden for Warning */
+                        }
+                        });
+                        $( "select option:selected" ).each(function() {
+                            let input_val = $( this ).text();
+                            let warn_check = $(this).attr("data-warn-check");
+                            if (warn_check != "") {
+                            /*start of remove value in hidden for Warning (If Present) */
+                            let wrng_crnt_ques_id = $('#result_crnt_ques_id').val();
+                            let wrng_opt_val = $(this).val();
+                            if ($(this).parentsUntil(".mcq_type").next().is('p')) {
+                                $(this).parentsUntil(".mcq_type").next().remove("p");
+                            }
+                            $("#warning_div .warn_input").each(function () {
+                                let warn_dat_id = $(this).attr("data-id");
+                                let warn_dat_opt = $(this).attr("data-option");
+                                if (wrng_crnt_ques_id === warn_dat_id && wrng_opt_val === warn_dat_opt) {
+                                    $(this).remove();
+                                }
+                            });
+                            /*End of remove value in hidden for Warning */
+                            let warn_msg = $(this).attr("data-warn-msg");
+                            $(this).parentsUntil(".mcq_type").after("<p class='warning_cls 123' style='line-height: 16px;display:none;'>" + warn_msg + "</p>");
+                            /*start of store value in hidden for Warning */
+                            $("#warning_div").append('<input class="warn_input" name="warn_input" data-id= "' + $('#result_crnt_ques_id').val() + '" data-type="' + img_attr + '" data-option="' + input_val + '" value="' + warn_msg + '" type="hidden">');
+                            /*EOF store value in hidden for Warning */
+                            }
+                        });
+                    })
+                    .trigger( "change" );
+                /*--End of Dropdown MCQ type warning --*/
